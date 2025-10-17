@@ -27,15 +27,16 @@ session_start();
             <?php
                 if(isset($_SESSION["username"]))
                 {
-                    echo "<a href='../login/register.php'>Profile</a>"
-                    echo "<a href='../login/logout.php'>Log out</a>"
+                    echo "<a href='../login/register.php'>Profile</a>";
+                    echo "<a href='../login/logout.php'>Log out</a>";
                 }
                 else{
                     echo "<a href='../login/register.php'>Register</a>";
-                    echo "<a href='../login/logout.php' class='Bbtn'>Login</a>";
+                    echo "<a href='../login/login.php' class='Bbtn'>Login</a>";
                 }
             ?>
         </div>
+        <div class="icon_toggle">🌙</div>
     </nav>
 </body>
 <script>
