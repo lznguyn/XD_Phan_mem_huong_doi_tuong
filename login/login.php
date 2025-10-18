@@ -166,7 +166,7 @@ if (isset($_POST['submit'])) {
             <input type="password" name="password" placeholder="Nhập Mật Khẩu" required class="box">
             <div class="btn-group">
                 <input type="submit" name="submit" value="Đăng Nhập" class="btn">
-                <button type="button" onclick="window.location.href='home.php'" class="btn btn-secondary">Trang Chủ</button>
+                <button type="button" onclick="window.location.href='dashboard.php'" class="btn btn-secondary">Trang Chủ</button>
             </div>
             <p>Bạn Đã Có Tài Khoản Chưa? <a href="register.php">Đăng Ký</a></p>
             <p><a href="forgot_pass.php">Quên Mật Khẩu?</a></p>

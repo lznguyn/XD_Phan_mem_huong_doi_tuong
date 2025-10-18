@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link rel="stylesheet" href="../Css/footer.css">
-</head>
-<body>
+<section class="footer">
     <div class="footer">
         <div class="footer_cont">
             <div class="s1">
@@ -54,4 +45,4 @@
 <script>
         document.getElementById("year").innerHTML = new Date().getFullYear();
     </script>
-</html>
+</section>
