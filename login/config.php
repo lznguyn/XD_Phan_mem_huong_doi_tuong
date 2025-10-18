@@ -1,5 +1,15 @@
 <?php
-// session_start();
-$conn = mysqli_connect("localhost","root","","music");
+// Thông tin kết nối
+$servername = 'localhost';
+$username = 'root';
+$password = '';
+$dbname = 'music';
 
+// Kết nối đến MySQL
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+
+// Kiểm tra kết nối
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
 ?>
