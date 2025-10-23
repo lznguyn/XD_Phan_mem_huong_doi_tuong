@@ -22,7 +22,7 @@ if (isset($message)) { // Kiểm tra message tồn tại hay không
 
     <div class="header-2">
         <div class="flex">
-            <a href="home.php" class="logo">MUSIc TIME</a>
+            <a href="home.php" class="logo">MUSIC TIME</a>
 
             <nav class="navbar">
                 <a href="dashboard.php">TRANG CHỦ</a>
