@@ -99,7 +99,7 @@ unset($_SESSION['show_success_modal']);
         </div>
         <div>
           <label class="block mb-1 font-semibold">Phương thức thanh toán</label>
-          <select name="payment_method" class="w-full border rounded-lg px-3 py-2">
+          <select id="payment_method" name="payment_method" class="w-full border rounded-lg px-3 py-2">
             <option value="Thanh toán khi giao hàng">Thanh toán khi giao hàng</option>
             <option value="ATM">Chuyển khoản ngân hàng</option>
             <option value="Momo">Thanh toán qua Momo</option>
@@ -112,6 +112,13 @@ unset($_SESSION['show_success_modal']);
         <button type="submit" name="order_btn" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
           <i class="fas fa-lock mr-2"></i>Thanh toán an toàn
         </button>
+        <div id="qrPayment" class="hidden mt-4 p-4 border rounded-lg text-center">
+          <p class="mb-2 font-semibold">Quét mã QR để thanh toán:</p>
+          <img id="qrImage" src="" alt="QR Code" class="mx-auto w-48 h-48 mb-2">
+          <button id="confirmPayment" class="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600">
+              Tôi đã thanh toán
+        </button>
+</div>
       </form>
     </div>
 
@@ -148,8 +155,7 @@ unset($_SESSION['show_success_modal']);
     </div>
   </div>
 </section>
-<?php include 'footer.php'; ?>
-
+ <?php include 'footer.php'?>
   <script>
   function showSuccessModal() {
     const modal = document.getElementById('successModal');
@@ -175,6 +181,41 @@ unset($_SESSION['show_success_modal']);
     modal.classList.remove('flex');
     setTimeout(() => modal.classList.add('hidden'), 500);
   }
+  const paymentMethod = document.getElementById('payment_method');
+const qrDiv = document.getElementById('qrPayment');
+const qrImg = document.getElementById('qrImage');
+const orderBtn = document.querySelector('button[name="order_btn"]');
+const confirmBtn = document.getElementById('confirmPayment');
+
+// Lưu QR code cho từng phương thức
+const qrCodes = {
+    'ATM': 'uploaded_img/atm-qr.png',  // đường dẫn QR code chuyển khoản ngân hàng
+    'Momo': 'uploaded_img/momo-qr.png' // đường dẫn QR code Momo
+};
+
+paymentMethod.addEventListener('change', function() {
+    const method = this.value;
+    if(method === 'ATM' || method === 'Momo'){
+        qrImg.src = qrCodes[method]; // đổi hình QR code
+        qrDiv.classList.remove('hidden'); // hiện QR
+        orderBtn.disabled = true;       // ẩn/disable nút thanh toán
+        orderBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+        orderBtn.classList.remove('bg-primary', 'hover:bg-blue-700');
+    } else {
+        qrDiv.classList.add('hidden');  // ẩn QR
+        orderBtn.disabled = false;      // bật lại nút thanh toán
+        orderBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+        orderBtn.classList.add('bg-primary', 'hover:bg-blue-700');
+    }
+});
+
+// Khi người dùng ấn xác nhận đã chuyển tiền
+confirmBtn.addEventListener('click', function(){
+    qrDiv.classList.add('hidden');     // ẩn QR
+    orderBtn.disabled = false;          // bật lại nút thanh toán
+    orderBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+    orderBtn.classList.add('bg-primary', 'hover:bg-blue-700');
+});
 
   // Hiển thị modal nếu đặt hàng thành công
   <?php if($show_success_modal): ?>
