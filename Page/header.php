@@ -27,7 +27,6 @@ if (isset($message)) { // Kiểm tra message tồn tại hay không
                 <a href="allBooking.php" class="hover:text-primary transition-colors">LỊCH CỦA TÔI</a>
                 <a href="upload.php" class="hover:text-primary transition-colors">UPLOAD FILE</a>
                 <a href="expert.php" class="hover:text-primary transition-colors">LIÊN HỆ CHUYÊN GIA</a>
-                <a href="payment.php" class="hover:text-primary transition-colors">THANH TOÁN</a>
                 <a href="order.php" class="hover:text-primary transition-colors">LỊCH SỬ THANH TOÁN</a>
 
             </nav>
@@ -44,7 +43,7 @@ if (isset($message)) { // Kiểm tra message tồn tại hay không
                 $select_cart_number = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
                 $cart_rows_number = mysqli_num_rows($select_cart_number);
                 ?>
-                <a href="cart.php" class="relative text-gray-700 hover:text-primary transition-colors">
+                <a href="payment.php" class="relative text-gray-700 hover:text-primary transition-colors">
                     <i class="fas fa-shopping-cart text-xl"></i>
                     <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-2">
                         <?php echo $cart_rows_number; ?>

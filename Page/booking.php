@@ -26,7 +26,7 @@ if (isset($_POST['book_session'])) {
     } else {
       mysqli_query($conn, "
           INSERT INTO bookings (user_id, expert_id, date, time_slot, status)
-          VALUES ('$user_id', '$expert_id', '$date', '$time_slot', 'pending')
+          VALUES ('$user_id', '$expert_id', '$booking_date', '$time_slot', 'pending')
           ") or die('query failed');
 
         $_SESSION['booking_message'] = 'Đặt lịch thành công!';
