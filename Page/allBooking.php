@@ -8,7 +8,14 @@ if (!$user_id) {
     header('Location: login.php');
     exit();
 }
-
+// Xử lý hủy lịch
+if (isset($_POST['cancel_booking'])) {
+    $booking_id = mysqli_real_escape_string($conn, $_POST['booking_id']);
+    mysqli_query($conn, "DELETE FROM `bookings` WHERE id='$booking_id' AND user_id='$user_id'") or die('query failed');
+    $_SESSION['cancel_message'] = 'Hủy lịch thành công!';
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit();
+}
 // Lấy danh sách lịch đã đặt của user
 $bookings = mysqli_query($conn, "
     SELECT b.*, e.name AS expert_name, e.image AS expert_image, e.role AS expert_role
@@ -65,7 +72,13 @@ $bookings = mysqli_query($conn, "
               <i class="fas fa-clock text-primary mr-2"></i>
               <?php echo $b['time_slot']; ?>
             </div>
-            <div class="text-accent font-semibold">Đã xác nhận</div>
+            <form method="post" onsubmit="return confirmCancel();">
+              <input type="hidden" name="booking_id" value="<?php echo $b['id']; ?>">
+              <button type="submit" name="cancel_booking" 
+                      class="bg-danger hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold">
+                <i class="fas fa-times-circle mr-1"></i> Hủy lịch
+              </button>
+            </form>
           </div>
         <?php endwhile; ?>
       </div>
@@ -74,5 +87,25 @@ $bookings = mysqli_query($conn, "
 </section>
 
 <?php include 'footer.php'; ?>
+<script>
+function confirmCancel(){
+  return confirm("Bạn có chắc muốn hủy lịch này không?");
+}
+function showMessage(message){
+  const modal = document.getElementById('messageModal');
+  const text = document.getElementById('messageText');
+  text.textContent = message;
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function closeModal(){
+  document.getElementById('messageModal').classList.add('hidden');
+  document.getElementById('messageModal').classList.remove('flex');
+}
+
+<?php if(isset($_SESSION['cancel_message'])): ?>
+showMessage("<?php echo $_SESSION['cancel_message']; ?>");
+<?php unset($_SESSION['cancel_message']); endif; ?>
+</script>
 </body>
 </html>

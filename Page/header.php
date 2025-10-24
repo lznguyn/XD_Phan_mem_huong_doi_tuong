@@ -28,6 +28,8 @@ if (isset($message)) { // Kiểm tra message tồn tại hay không
                 <a href="upload.php" class="hover:text-primary transition-colors">UPLOAD FILE</a>
                 <a href="expert.php" class="hover:text-primary transition-colors">LIÊN HỆ CHUYÊN GIA</a>
                 <a href="payment.php" class="hover:text-primary transition-colors">THANH TOÁN</a>
+                <a href="order.php" class="hover:text-primary transition-colors">LỊCH SỬ THANH TOÁN</a>
+
             </nav>
 
             <!-- Icons / User -->
