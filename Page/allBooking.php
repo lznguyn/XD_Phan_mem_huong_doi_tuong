@@ -72,13 +72,29 @@ $bookings = mysqli_query($conn, "
               <i class="fas fa-clock text-primary mr-2"></i>
               <?php echo $b['time_slot']; ?>
             </div>
-            <form method="post" onsubmit="return confirmCancel();">
-              <input type="hidden" name="booking_id" value="<?php echo $b['id']; ?>">
-              <button type="submit" name="cancel_booking" 
-                      class="bg-danger hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold">
-                <i class="fas fa-times-circle mr-1"></i> Hủy lịch
-              </button>
-            </form>
+            <div class="mt-2 mb-2">
+              <?php 
+                $status = $b['status'] ?? 'pending';
+                $color = $status == 'confirmed' ? 'bg-green-500' : ($status == 'cancelled' ? 'bg-red-500' : 'bg-yellow-500');
+                $label = $status == 'confirmed' ? 'Đã xác nhận' : ($status == 'cancelled' ? 'Đã hủy' : 'Đang chờ');
+              ?>
+              <span class="px-3 py-1 text-white text-sm rounded-full <?php echo $color; ?>">
+                <?php echo $label; ?>
+              </span>
+            </div>
+              <?php if ($b['status'] == 'pending'): ?>
+                <form method="post" onsubmit="return confirmCancel();">
+                  <input type="hidden" name="booking_id" value="<?php echo $b['id']; ?>">
+                  <button type="submit" name="cancel_booking" 
+                          class="bg-danger hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold">
+                    <i class="fas fa-times-circle mr-1"></i> Hủy lịch
+                  </button>
+                </form>
+              <?php elseif ($b['status'] == 'confirmed'): ?>
+                <p class="text-green-600 font-semibold mt-2">Lịch đã được xác nhận</p>
+              <?php elseif ($b['status'] == 'cancelled'): ?>
+                <p class="text-red-600 font-semibold mt-2">Lịch đã bị hủy</p>
+              <?php endif; ?>
           </div>
         <?php endwhile; ?>
       </div>

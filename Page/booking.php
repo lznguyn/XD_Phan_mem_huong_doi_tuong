@@ -24,10 +24,11 @@ if (isset($_POST['book_session'])) {
         $_SESSION['booking_message'] = 'Khung giờ này đã có người đặt!';
         $_SESSION['booking_success'] = false;
     } else {
-        mysqli_query($conn, "
-            INSERT INTO `bookings`(user_id, expert_id, date, time_slot)
-            VALUES ('$user_id', '$expert_id', '$booking_date', '$time_slot')
-        ") or die('query failed');
+      mysqli_query($conn, "
+          INSERT INTO bookings (user_id, expert_id, date, time_slot, status)
+          VALUES ('$user_id', '$expert_id', '$date', '$time_slot', 'pending')
+          ") or die('query failed');
+
         $_SESSION['booking_message'] = 'Đặt lịch thành công!';
         $_SESSION['booking_success'] = true;
     }
