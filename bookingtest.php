@@ -10,7 +10,7 @@ if (isset($_POST['book_session'])) {
         exit();
     }
 
-    $expert_id = mysqli_real_escape_string($conn, $_POST['expert_id']);
+      $expert_id = mysqli_real_escape_string($conn, $_POST['expert_id']);
     $booking_date = mysqli_real_escape_string($conn, $_POST['booking_date']);
     $time_slot = mysqli_real_escape_string($conn, $_POST['time_slot']);
 
