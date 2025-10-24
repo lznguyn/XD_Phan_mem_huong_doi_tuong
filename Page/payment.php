@@ -1,139 +1,191 @@
 <?php
 include 'config.php';
 session_start();
+$user_id = $_SESSION['user_id'] ?? null;
+$show_success_modal = false;
+// Xử lý đặt hàng
+if (isset($_POST['order_btn'])) {
+    $name = mysqli_real_escape_string($conn, $_POST['customer_name']);
+    $number = $_POST['customer_phone'];
+    $email = mysqli_real_escape_string($conn, $_POST['customer_email']);
+    $method = mysqli_real_escape_string($conn, $_POST['payment_method']);
+    $address = mysqli_real_escape_string($conn, $_POST['address'] ?? '');
+    $placed_on = date('d-M-Y');
 
-// Kiểm tra người dùng đã đăng nhập
-$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
-if (!$user_id) {
-    header('Location: login.php');
-    exit();
-}
-if (isset($_POST['update_cart'])) {
-    foreach($_POST['quantities'] as $cart_id => $qty) {
-        $qty = (int)$qty;
-        if ($qty > 0) {
-            mysqli_query($conn, "UPDATE `cart` SET quantity = '$qty' WHERE id = '$cart_id' AND user_id = '$user_id'");
+    $cart_total = 0;
+    $cart_products = [];
+
+    $cart_query = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id='$user_id'") or die('query failed');
+
+    if (mysqli_num_rows($cart_query) > 0) {
+        while ($cart_item = mysqli_fetch_assoc($cart_query)) {
+            $cart_products[] = $cart_item['name'] . ' (' . $cart_item['quantity'] . ')';
+            $cart_total += $cart_item['price'] * $cart_item['quantity'];
         }
     }
-    $_SESSION['cart_message'] = "Cập nhật giỏ hàng thành công!";
-    header('Location: checkout.php');
-    exit();
-}
-if (isset($_GET['remove'])) {
-    $remove_id = (int)$_GET['remove'];
-    mysqli_query($conn, "DELETE FROM `cart` WHERE id = '$remove_id' AND user_id = '$user_id'");
-    $_SESSION['cart_message'] = "Dịch vụ đã được xóa khỏi giỏ hàng!";
-    header('Location: checkout.php');
-    exit();
-}
-// Xử lý thanh toán
-if (isset($_POST['checkout'])) {
-    $cart_items = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
-    if (mysqli_num_rows($cart_items) > 0) {
-        $total_amount = 0;
-        while ($item = mysqli_fetch_assoc($cart_items)) {
-            $total_amount += $item['price'] * $item['quantity'];
-            // Lưu vào bảng transactions
-            mysqli_query($conn, "INSERT INTO `transactions`(user_id, service_name, price, quantity, image, transaction_date) 
-            VALUES('$user_id', '{$item['name']}', '{$item['price']}', '{$item['quantity']}', '{$item['image']}', NOW())") or die('query failed');
-        }
-        // Xóa giỏ hàng sau khi thanh toán
-        mysqli_query($conn, "DELETE FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
-        $_SESSION['checkout_message'] = "Thanh toán thành công! Tổng: ".number_format($total_amount,0,',','.')." VNĐ";
-        header('Location: checkout.php');
-        exit();
+
+    $total_products = implode(', ', $cart_products);
+
+    if ($cart_total == 0) {
+        $_SESSION['cart_message'] = 'Giỏ hàng của bạn đang trống!';
     } else {
-        $_SESSION['checkout_message'] = "Giỏ hàng trống!";
-        header('Location: checkout.php');
-        exit();
+        $order_query = mysqli_query($conn, "SELECT * FROM `orders` WHERE name='$name' AND number='$number' AND email='$email' AND method='$method' AND total_products='$total_products' AND total_price='$cart_total'") or die('query failed');
+
+        if (mysqli_num_rows($order_query) > 0) {
+            $_SESSION['cart_message'] = 'Đơn hàng đã được đặt trước đó!';
+        } else {
+            mysqli_query($conn, "INSERT INTO `orders`(user_id,name,number,email,method,total_products,total_price,placed_on) VALUES('$user_id','$name','$number','$email','$method','$total_products','$cart_total','$placed_on')") or die('query failed');
+            mysqli_query($conn, "DELETE FROM `cart` WHERE user_id='$user_id'") or die('query failed');
+            $_SESSION['cart_message'] = 'Đơn hàng đã được đặt thành công!';
+            $show_success_modal = true;
+        }
     }
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit();
 }
+$cart_message = $_SESSION['cart_message'] ?? '';
+unset($_SESSION['cart_message']);
 
-// Lấy danh sách giỏ hàng
-$cart_items = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
-
-// Lấy lịch sử giao dịch
-$transactions = mysqli_query($conn, "SELECT * FROM `transactions` WHERE user_id = '$user_id' ORDER BY transaction_date DESC") or die('query failed');
-
+$show_success_modal = $_SESSION['show_success_modal'] ?? false;
+unset($_SESSION['show_success_modal']);
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MuTraPro - Giỏ hàng & Lịch sử</title>
-<link rel="stylesheet" href="css/style.css">
-<style>
-.checkout-container { max-width: 900px; margin: 2rem auto; padding: 1rem; }
-.cart-item, .transaction-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; }
-.cart-item img, .transaction-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; }
-.qty-input { width: 60px; padding: 0.3rem; text-align: center; }
-.btn { padding: 0.5rem 1rem; background: #000; color: #fff; border: none; cursor: pointer; border-radius: 5px; margin-left: 0.5rem; }
-.empty { text-align: center; padding: 2rem 0; color: #555; }
-.actions { display: flex; align-items: center; }
-.total { font-weight: bold; text-align: right; margin-top: 1rem; }
-</style>
-</head>
-<body>
-<?php include 'header.php'; ?>
-
-<div class="checkout-container">
-    <h2>Giỏ hàng của bạn</h2>
-
-    <?php if(mysqli_num_rows($cart_items) > 0): ?>
-    <form method="post">
-        <?php $total=0; while($item = mysqli_fetch_assoc($cart_items)):
-            $subtotal = $item['price'] * $item['quantity'];
-            $total += $subtotal;
-        ?>
-        <div class="cart-item">
-            <img src="uploaded_img/<?php echo $item['image']; ?>" alt="">
-            <div>
-                <div><?php echo $item['name']; ?></div>
-                <div><?php echo number_format($item['price'],0,',','.'); ?> VNĐ</div>
-            </div>
-            <div class="actions">
-                <input type="number" min="1" name="quantities[<?php echo $item['id']; ?>]" value="<?php echo $item['quantity']; ?>" class="qty-input">
-                <a href="?remove=<?php echo $item['id']; ?>" class="btn" style="background:#e74c3c;">Xóa</a>
-            </div>
-            <div><?php echo number_format($subtotal,0,',','.'); ?> VNĐ</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thanh toán - MuTraPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1e40af",
+              secondary: "#f59e0b",
+              accent: "#10b981",
+              danger: "#dc2626",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+<body class="bg-gray-50">
+    <!-- Header -->
+<?php include 'header.php';?>
+    <!-- Breadcrumb -->
+    <!-- Payment Section -->
+  <section class="max-w-7xl mx-auto px-4 py-8 grid lg:grid-cols-3 gap-8">
+    <!-- Form Thanh toán -->
+    <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
+      <h2 class="text-2xl font-bold mb-4">Thông tin thanh toán</h2>
+      <form method="post" class="space-y-4">
+        <div>
+          <label class="block mb-1 font-semibold">Họ và tên</label>
+          <input type="text" name="customer_name" required class="w-full border rounded-lg px-3 py-2"/>
         </div>
-        <?php endwhile; ?>
-        <div class="total">Tổng: <?php echo number_format($total,0,',','.'); ?> VNĐ</div>
-        <input type="submit" name="update_cart" value="Cập nhật giỏ hàng" class="btn">
-        <input type="submit" name="checkout" value="Thanh toán ngay" class="btn">
-    </form>
-    <?php else: ?>
-        <p class="empty">Giỏ hàng trống!</p>
-    <?php endif; ?>
-
-    <h2 style="margin-top:3rem">Lịch sử giao dịch</h2>
-    <?php if(mysqli_num_rows($transactions) > 0): ?>
-        <?php while($tran = mysqli_fetch_assoc($transactions)): ?>
-        <div class="transaction-item">
-            <img src="uploaded_img/<?php echo $tran['image']; ?>" alt="">
-            <div>
-                <div><?php echo $tran['service_name']; ?></div>
-                <div><?php echo number_format($tran['price'],0,',','.'); ?> VNĐ x <?php echo $tran['quantity']; ?></div>
-            </div>
-            <div><?php echo date('d/m/Y H:i', strtotime($tran['transaction_date'])); ?></div>
+        <div>
+          <label class="block mb-1 font-semibold">Số điện thoại</label>
+          <input type="tel" name="customer_phone" required class="w-full border rounded-lg px-3 py-2"/>
         </div>
-        <?php endwhile; ?>
-    <?php else: ?>
-        <p class="empty">Chưa có giao dịch nào!</p>
-    <?php endif; ?>
-</div>
+        <div>
+          <label class="block mb-1 font-semibold">Email</label>
+          <input type="email" name="customer_email" required class="w-full border rounded-lg px-3 py-2"/>
+        </div>
+        <div>
+          <label class="block mb-1 font-semibold">Phương thức thanh toán</label>
+          <select name="payment_method" class="w-full border rounded-lg px-3 py-2">
+            <option value="Thanh toán khi giao hàng">Thanh toán khi giao hàng</option>
+            <option value="ATM">Chuyển khoản ngân hàng</option>
+            <option value="Momo">Thanh toán qua Momo</option>
+          </select>
+        </div>
+        <div>
+          <label class="block mb-1 font-semibold">Địa chỉ</label>
+          <input type="text" name="address" class="w-full border rounded-lg px-3 py-2" placeholder="Số nhà, đường, thành phố, quốc gia"/>
+        </div>
+        <button type="submit" name="order_btn" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
+          <i class="fas fa-lock mr-2"></i>Thanh toán an toàn
+        </button>
+      </form>
+    </div>
 
-<?php include 'footer.php'; ?>
+    <!-- Order Summary -->
+  <!-- Chi tiết đơn hàng -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <h3 class="text-xl font-bold mb-4">Chi tiết đơn hàng</h3>
+      <?php
+      $grand_total = 0;
+      $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id='$user_id'");
+      if(mysqli_num_rows($select_cart) > 0){
+        while($item = mysqli_fetch_assoc($select_cart)){
+          $sub_total = $item['price'] * $item['quantity'];
+          $grand_total += $sub_total;
+          echo '<div class="flex justify-between mb-2">';
+          echo '<span>'.$item['name'].' x '.$item['quantity'].'</span>';
+          echo '<span>'.number_format($sub_total,0,',','.').' VNĐ</span>';
+          echo '</div>';
+        }
+      } else {
+        echo '<p class="text-red-500">Giỏ hàng của bạn đang trống!</p>';
+      }
+      ?>
+      <div class="border-t mt-2 pt-2 font-bold flex justify-between">
+        <span>Tổng cộng:</span>
+        <span><?= number_format($grand_total,0,',','.'); ?> VNĐ</span>
+      </div>
+    </div>
+  <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-xl scale-90 opacity-0">
+      <h2 class="text-xl font-bold mb-2">Đặt hàng thành công!</h2>
+      <p>Cảm ơn bạn đã đặt hàng. Đơn hàng sẽ được xử lý sớm nhất.</p>
+     <button onclick="closeSuccessModal()" class="mt-4 bg-primary text-white py-2 px-4 rounded-lg">Đóng</button>
+    </div>
+  </div>
+  <?php include 'footer.php'; ?>
+</section>
+  <script>
+  function showSuccessModal() {
+    const modal = document.getElementById('successModal');
+    const content = modal.querySelector('div');
 
-<?php if (isset($_SESSION['cart_message'])): ?>
-<script>alert("<?php echo $_SESSION['cart_message']; ?>");</script>
-<?php unset($_SESSION['cart_message']); endif; ?>
-<?php if (isset($_SESSION['checkout_message'])): ?>
-<script>alert("<?php echo $_SESSION['checkout_message']; ?>");</script>
-<?php unset($_SESSION['checkout_message']); endif; ?>
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+      modal.classList.add('flex');
+      content.classList.remove('scale-90', 'opacity-0');
+      content.classList.add('scale-100', 'opacity-100');
+    }, 10);
 
+    // Tự động đóng sau 5 giây
+    setTimeout(closeSuccessModal, 5000);
+  }
+
+  function closeSuccessModal() {
+    const modal = document.getElementById('successModal');
+    const content = modal.querySelector('div');
+
+    content.classList.add('scale-90', 'opacity-0');
+    content.classList.remove('scale-100', 'opacity-100');
+    modal.classList.remove('flex');
+    setTimeout(() => modal.classList.add('hidden'), 500);
+  }
+
+  // Hiển thị modal nếu đặt hàng thành công
+  <?php if($show_success_modal): ?>
+  showSuccessModal();
+  <?php endif; ?>
+  </script>
+
+  <style>
+  /* Scale và opacity chuyển mượt hơn */
+  #successModal div {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+  </style>
 </body>
 </html>
-
