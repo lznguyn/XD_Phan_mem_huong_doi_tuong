@@ -147,8 +147,9 @@ unset($_SESSION['show_success_modal']);
      <button onclick="closeSuccessModal()" class="mt-4 bg-primary text-white py-2 px-4 rounded-lg">Đóng</button>
     </div>
   </div>
-  <?php include 'footer.php'; ?>
 </section>
+<?php include 'footer.php'; ?>
+
   <script>
   function showSuccessModal() {
     const modal = document.getElementById('successModal');

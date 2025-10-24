@@ -24,6 +24,7 @@ if (isset($message)) { // Kiểm tra message tồn tại hay không
             <nav class="hidden md:flex space-x-6 text-gray-700 font-medium">
                 <a href="dashboard.php" class="hover:text-primary transition-colors">TRANG CHỦ</a>
                 <a href="booking.php" class="hover:text-primary transition-colors">ĐẶT LỊCH</a>
+                <a href="allBooking.php" class="hover:text-primary transition-colors">LỊCH CỦA TÔI</a>
                 <a href="upload.php" class="hover:text-primary transition-colors">UPLOAD FILE</a>
                 <a href="expert.php" class="hover:text-primary transition-colors">LIÊN HỆ CHUYÊN GIA</a>
                 <a href="payment.php" class="hover:text-primary transition-colors">THANH TOÁN</a>
@@ -57,6 +58,10 @@ if (isset($message)) { // Kiểm tra message tồn tại hay không
                         <p class="text-gray-800 text-sm mb-2">Email: <span class="font-semibold"><?php echo $_SESSION['user_email']; ?></span></p>
                         <a href="logout.php" class="block text-center bg-red-500 text-white py-1 rounded hover:bg-red-600 transition-colors">Đăng Xuất</a>
                     </div>
+                    <?php else: ?>
+                        <div class="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg p-3 hidden" id="user-box">
+                            <a href="login.php" class="block text-center bg-blue-500 text-white py-1 rounded hover:bg-blue-600 transition-colors">Đăng Nhập</a>
+                        </div>
                     <?php endif; ?>
                 </div>
 
@@ -68,3 +73,9 @@ if (isset($message)) { // Kiểm tra message tồn tại hay không
         </div>
     </div>
 </header>
+<script>
+document.getElementById('user-btn').addEventListener('click', function() {
+    const box = document.getElementById('user-box');
+    box.classList.toggle('hidden');
+});
+</script>
