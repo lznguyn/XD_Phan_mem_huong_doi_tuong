@@ -3,6 +3,7 @@ include 'config.php';
 session_start();
 $user_id = $_SESSION['user_id'] ?? null;
 $show_success_modal = false;
+
 // Xử lý đặt hàng
 if (isset($_POST['order_btn'])) {
     $name = mysqli_real_escape_string($conn, $_POST['customer_name']);

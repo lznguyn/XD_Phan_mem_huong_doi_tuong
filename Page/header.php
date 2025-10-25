@@ -10,6 +10,12 @@ if (isset($message)) { // Kiểm tra message tồn tại hay không
     }
 }
 ?>
+<style>
+.dropdown-menu {
+  min-width: max-content; /* Tự giãn theo nội dung dài nhất */
+  white-space: nowrap;    /* Không xuống dòng */
+}
+</style>
 <header class="bg-white shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
@@ -27,7 +33,17 @@ if (isset($message)) { // Kiểm tra message tồn tại hay không
                 <a href="allBooking.php" class="hover:text-primary transition-colors">LỊCH CỦA TÔI</a>
                 <a href="upload.php" class="hover:text-primary transition-colors">UPLOAD FILE</a>
                 <a href="expert.php" class="hover:text-primary transition-colors">LIÊN HỆ CHUYÊN GIA</a>
-                <a href="order.php" class="hover:text-primary transition-colors">LỊCH SỬ THANH TOÁN</a>
+                <div class="relative">
+                    <button onclick="toggleHistory()" class="hover:text-primary transition-colors">
+                        LỊCH SỬ
+                    </button>
+                    <div id="historyMenu" class="absolute hidden bg-white shadow-md mt-2 rounded">
+                        <a href="order.php" class="dropdown-menu block px-4 py-2 hover:bg-gray-100">LỊCH SỬ THANH TOÁN</a>
+                        <a href="musicSubmission.php" class="block px-4 py-2 hover:bg-gray-100">LỊCH SỬ GỬI NHẠC</a>
+                        <a href="musicEdit.php" class="block px-4 py-2 hover:bg-gray-100">LỊCH SỬ CHỈNH SỬA</a>
+                    </div>
+                </div>
+               
 
             </nav>
 
@@ -79,4 +95,7 @@ document.getElementById('user-btn').addEventListener('click', function() {
     const box = document.getElementById('user-box');
     box.classList.toggle('hidden');
 });
+function toggleHistory() {
+  document.getElementById("historyMenu").classList.toggle("hidden");
+}
 </script>
