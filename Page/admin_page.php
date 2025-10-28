@@ -73,6 +73,9 @@ if (!$admin_id) {
         $products_count = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM services"));
         $pending_orders_count = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM bookings WHERE status = 'pending'"));
         $completed_orders_count = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM bookings WHERE status = 'completed'"));
+        $experts_count = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM experts"));
+        $musicsub_pending_count = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM music_submissions WHERE status = 'pending'"));
+        $musicsub_completed_count = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM music_submissions WHERE status = 'completed'"));
 
         $users_count = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE user_type='user'"));
         $admins_count = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE user_type='admin'"));
@@ -122,6 +125,36 @@ if (!$admin_id) {
                 <h3 class="text-2xl font-bold text-gray-900"><?php echo $products_count; ?></h3>
                 <p class="text-gray-600 text-sm mt-1">Dịch vụ âm nhạc</p>
             </div>
+            
+            <div class="bg-white rounded-2xl shadow p-6 hover:shadow-lg transition">
+                <div class="flex justify-between mb-4">
+                    <div class="bg-purple-100 p-3 rounded-xl">
+                        <i class="fas fa-music text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900"><?php echo $musicsub_pending_count; ?></h3>
+                <p class="text-gray-600 text-sm mt-1">Yêu cầu chỉnh sửa nhạc chưa hoàn tất</p>
+            </div>
+              <div class="bg-white rounded-2xl shadow p-6 hover:shadow-lg transition">
+                <div class="flex justify-between mb-4">
+                    <div class="bg-purple-100 p-3 rounded-xl">
+                        <i class="fas fa-music text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900"><?php echo $musicsub_completed_count; ?></h3>
+                <p class="text-gray-600 text-sm mt-1">Yêu cầu chỉnh sửa nhạc đã hoàn tất</p>
+            </div>
+
+             <div class="bg-white rounded-2xl shadow p-6 hover:shadow-lg transition">
+                <div class="flex justify-between mb-4">
+                    <div class="bg-purple-100 p-3 rounded-xl">
+                        <i class="fas fa-user text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900"><?php echo $experts_count; ?></h3>
+                <p class="text-gray-600 text-sm mt-1">Chuyên gia công ty</p>
+            </div>
+
             <div class="bg-white rounded-2xl shadow p-6 hover:shadow-lg transition">
                 <div class="flex justify-between mb-4">
                     <div class="bg-warning bg-opacity-10 p-3 rounded-xl">

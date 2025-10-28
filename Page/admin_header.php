@@ -25,6 +25,7 @@ if (isset($message)) {
             <nav class="hidden md:flex space-x-6 text-gray-700 font-medium">
                 <a href="admin_page.php" class="hover:text-primary transition-colors">Trang chủ</a>
                 <a href="admin_service.php" class="hover:text-primary transition-colors">Dịch vụ</a>
+                <a href="admin_expert.php" class="hover:text-primary transition-colors">Chuyên gia</a>
                 <a href="admin_orders.php" class="hover:text-primary transition-colors">Đặt hàng</a>
                 <a href="admin_user.php" class="hover:text-primary transition-colors">Users</a>
                 <a href="admin_contacts.php" class="hover:text-primary transition-colors">Tin nhắn</a>
