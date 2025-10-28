@@ -208,7 +208,6 @@ if(isset($_POST['update_product'])){
                         <div class="flex justify-between items-center mb-3">
                             <span class="text-primary font-bold text-xl"><?php echo number_format($fetch_products['price'], 0, ',', '.'); ?> VNĐ</span>
                         </div>
-                        <p class="text-gray-600 text-sm mb-2"><?php echo $fetch_products['description']; ?></p>
                         <div class="flex space-x-2">
                             <a href="admin_service.php?update=<?php echo $fetch_products['id']; ?>" class="flex-1 bg-warning text-white py-2 rounded-lg hover:bg-yellow-600 text-center text-sm font-medium"><i class="fas fa-edit mr-1"></i>Sửa</a>
                             <a href="admin_service.php?delete=<?php echo $fetch_products['id']; ?>" onclick="return confirm('Bạn có chắc muốn xóa dịch vụ này?');" class="flex-1 bg-danger text-white py-2 rounded-lg hover:bg-red-700 text-center text-sm font-medium"><i class="fas fa-trash mr-1"></i>Xóa</a>
