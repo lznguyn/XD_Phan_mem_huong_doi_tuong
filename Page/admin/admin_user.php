@@ -1,5 +1,5 @@
 <?php
-include 'config.php';
+include '../user/config.php';
 session_start();
 
 $admin_id = $_SESSION['admin_id'] ?? null;

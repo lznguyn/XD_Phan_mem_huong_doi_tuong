@@ -52,7 +52,7 @@ if (isset($message)) {
         <p class="text-gray-700 mb-3">
             📧 Email: <span class="font-medium"><?php echo $_SESSION['admin_email'] ?? 'admin@example.com'; ?></span>
         </p>
-        <a href="logout.php" class="block w-full text-center bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition mb-2">
+        <a href="admin_logout.php" class="block w-full text-center bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition mb-2">
             <i class="fas fa-sign-out-alt mr-2"></i>Đăng xuất
         </a>
         <div class="flex justify-center text-sm text-gray-500 gap-2">

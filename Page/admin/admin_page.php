@@ -1,5 +1,5 @@
 <?php
-include 'config.php';
+include '../user/config.php';
 session_start();
 
 // Kiểm tra quyền đăng nhập admin

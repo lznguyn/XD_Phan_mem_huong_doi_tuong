@@ -75,8 +75,8 @@ $bookings = mysqli_query($conn, "
             <div class="mt-2 mb-2">
               <?php 
                 $status = $b['status'] ?? 'pending';
-                $color = $status == 'confirmed' ? 'bg-green-500' : ($status == 'cancelled' ? 'bg-red-500' : 'bg-yellow-500');
-                $label = $status == 'confirmed' ? 'Đã xác nhận' : ($status == 'cancelled' ? 'Đã hủy' : 'Đang chờ');
+                $color = $status == 'completed' ? 'bg-green-500' : ($status == 'cancelled' ? 'bg-red-500' : 'bg-yellow-500');
+                $label = $status == 'completed' ? 'Đã xác nhận' : ($status == 'cancelled' ? 'Đã hủy' : 'Đang chờ');
               ?>
               <span class="px-3 py-1 text-white text-sm rounded-full <?php echo $color; ?>">
                 <?php echo $label; ?>
