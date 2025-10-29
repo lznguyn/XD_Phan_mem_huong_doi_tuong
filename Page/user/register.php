@@ -75,6 +75,7 @@ if(isset($_POST['submit'])){
                 <select name="user_type" onchange="toggleAdminCodeField(this)" class="w-full px-4 py-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white focus:ring-2 focus:ring-blue-400 focus:border-transparent">
                     <option value="user">Người dùng</option>
                     <option value="admin">Quản trị viên</option>
+                    <option value="coordinator">Điều phối viên</option>
                 </select>
 
                 <div id="admin-code-container" class="hidden">

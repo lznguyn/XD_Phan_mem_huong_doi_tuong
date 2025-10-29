@@ -41,6 +41,7 @@ if (isset($message)) { // Kiểm tra message tồn tại hay không
                         <a href="order.php" class="dropdown-menu block px-4 py-2 hover:bg-gray-100">LỊCH SỬ THANH TOÁN</a>
                         <a href="musicSubmission.php" class="block px-4 py-2 hover:bg-gray-100">LỊCH SỬ GỬI NHẠC</a>
                         <a href="musicEdit.php" class="block px-4 py-2 hover:bg-gray-100">LỊCH SỬ CHỈNH SỬA</a>
+                        <a href="nofication.php" class="block px-4 py-2 hover:bg-gray-100">TIN NHẮN</a>
                     </div>
                 </div>
                

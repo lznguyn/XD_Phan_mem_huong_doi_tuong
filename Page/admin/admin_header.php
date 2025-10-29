@@ -28,7 +28,7 @@ if (isset($message)) {
                 <a href="admin_expert.php" class="hover:text-primary transition-colors">Chuyên gia</a>
                 <a href="admin_order.php" class="hover:text-primary transition-colors">Đặt hàng</a>
                 <a href="admin_user.php" class="hover:text-primary transition-colors">Users</a>
-                <a href="admin_contacts.php" class="hover:text-primary transition-colors">Tin nhắn</a>
+                <a href="admin_booking.php" class="hover:text-primary transition-colors">Quản lí đặt lịch</a>
             </nav>
 
             <!-- Icons -->

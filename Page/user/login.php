@@ -26,6 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['user_id'] = $row['id'];
                 header('Location: dashboard.php');
                 exit();
+            } elseif ($row['user_type'] == 'coordinator') {
+                $_SESSION['coordinator_name'] = $row['name'];
+                $_SESSION['coordinator_email'] = $row['email'];
+                $_SESSION['coordinator_id'] = $row['id'];
+                header('Location: ../coordinator/coordinator_page.php');
+                exit();
             }
         } else {
             $message[] = 'Thông tin tài khoản hoặc mật khẩu không đúng!';
