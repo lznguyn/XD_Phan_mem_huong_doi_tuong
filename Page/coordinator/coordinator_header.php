@@ -19,9 +19,9 @@
 
 <!-- Menu -->
 <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
-  <a href="coordinator_page.php" class="hover:text-yellow-300 transition">Yêu cầu</a>
+  <a href="coordinator_page.php" class="hover:text-yellow-300 transition">Trang chủ quản lí</a>
   <a href="coordinator_message.php" class="hover:text-yellow-300 transition">Gửi tin nhắn</a>
-  <a href="reports.php" class="hover:text-yellow-300 transition">Báo cáo</a>
+  <a href="coordinator_request.php" class="hover:text-yellow-300 transition">Yêu cầu</a>
 </nav>
 
 <!-- User -->
