@@ -32,6 +32,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['coordinator_id'] = $row['id'];
                 header('Location: ../coordinator/coordinator_page.php');
                 exit();
+            } elseif ($row['user_type'] == 'arragement') {
+                $_SESSION['arragement_name'] = $row['name'];
+                $_SESSION['arragement_email'] = $row['email'];
+                $_SESSION['arragement_id'] = $row['id'];
+                header('Location: ../arragement/arragement_page.php');
+                exit();
+            } elseif ($row['user_type'] == 'transcription') {
+                $_SESSION['transcription_name'] = $row['name'];
+                $_SESSION['transcription_email'] = $row['email'];
+                $_SESSION['transcription_id'] = $row['id'];
+                header('Location: ../transcription/transcription_page.php');
+                exit();
+            } elseif ($row['user_type'] == 'recording_artists') {
+                $_SESSION['recording_artists_name'] = $row['name'];
+                $_SESSION['recording_artists_email'] = $row['email'];
+                $_SESSION['recording_artists_id'] = $row['id'];
+                header('Location: ../recording_artists/recording_artists_page.php');
+                exit();
             }
         } else {
             $message[] = 'Thông tin tài khoản hoặc mật khẩu không đúng!';

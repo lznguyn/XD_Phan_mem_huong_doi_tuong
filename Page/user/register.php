@@ -76,6 +76,10 @@ if(isset($_POST['submit'])){
                     <option value="user">Người dùng</option>
                     <option value="admin">Quản trị viên</option>
                     <option value="coordinator">Điều phối viên</option>
+                    <option value="arragement">Chuyên gia Hòa âm</option>
+                    <option value="transcription">Chuyên gia Phiên âm</option>
+                     <option value="recording_artists">Nghệ sĩ Thu âm</option>
+
                 </select>
 
                 <div id="admin-code-container" class="hidden">

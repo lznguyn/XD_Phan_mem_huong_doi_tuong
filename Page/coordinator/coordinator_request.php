@@ -61,7 +61,11 @@ $result = mysqli_query($conn, $query) or die('Query failed' . mysqli_error($conn
           <th class="py-3 px-4 text-left">Mã</th>
           <th class="py-3 px-4 text-left">Khách hàng</th>
           <th class="py-3 px-4 text-left">Ngày tạo</th>
+          <th class="py-3 px-4 text-left">Tên bài hát</th>
+          <th class="py-3 px-4 text-left">Yêu cầu</th>
+          <th class="py-3 px-4 text-left">Người nhận</th>
           <th class="py-3 px-4 text-left">Trạng thái</th>
+
         </tr>
       </thead>
       <tbody>
@@ -71,6 +75,9 @@ $result = mysqli_query($conn, $query) or die('Query failed' . mysqli_error($conn
               <td class="py-3 px-4"><?php echo $req['id']; ?></td>
               <td class="py-3 px-4"><?php echo $req['customer_name']; ?></td>
               <td class="py-3 px-4"><?php echo $req['created_at']; ?></td>
+              <td class="py-3 px-4"><?php echo htmlspecialchars($req['title']); ?></td>
+              <td class="py-3 px-4"><?php echo htmlspecialchars($req['note']); ?></td>
+              <td class="py-3 px-4"><?php echo ucfirst($req['target_role']); ?></td>   
               <td class="py-3 px-4">
                 <?php 
                   $status = $req['status'];

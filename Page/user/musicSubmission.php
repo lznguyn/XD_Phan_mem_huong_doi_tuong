@@ -16,6 +16,7 @@ $upload_message = "";
 if (isset($_POST['send_music_btn'])) {
     $title = mysqli_real_escape_string($conn, $_POST['music_title']);
     $note = mysqli_real_escape_string($conn, $_POST['note']);
+    $target_role = mysqli_real_escape_string($conn, $_POST['target_role']);
 
     // Kiểm tra file
     if (isset($_FILES['music_file']) && $_FILES['music_file']['error'] == 0) {
@@ -31,8 +32,8 @@ if (isset($_POST['send_music_btn'])) {
             $new_name = uniqid('music_', true) . '.' . $file_ext;
             move_uploaded_file($file_tmp, $upload_dir . $new_name);
 
-            mysqli_query($conn, "INSERT INTO `music_submissions`(user_id, title, file_name, note, status, created_at)
-                VALUES('$user_id', '$title', '$new_name', '$note', 'pending', NOW())") or die('query failed');
+            mysqli_query($conn, "INSERT INTO `music_submissions`(user_id, title, file_name, note, status, target_role, created_at)
+                VALUES('$user_id', '$title', '$new_name', '$note', 'pending', '$target_role', NOW())") or die('query failed');
 
             $_SESSION['upload_message'] = 'Gửi bản nhạc thành công! Chúng tôi sẽ liên hệ sớm.';
             header('Location: ' . $_SERVER['PHP_SELF']);
@@ -107,6 +108,18 @@ $submissions = mysqli_query($conn, "
                   placeholder="Ví dụ: Mong muốn chỉnh tone, thêm nhạc cụ, làm bản phối mới..."></textarea>
       </div>
 
+      <div class="mb-4">
+        <label class="block font-semibold mb-1">Gửi đến</label>
+        <select name="target_role" required
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary">
+            <option value="">-- Chọn người nhận --</option>
+            <option value="transcription">Chuyên gia Phiên âm</option>
+            <option value="arrangement">Chuyên gia Hòa âm</option>
+            <option value="recording_artists">Nghệ sĩ Thu âm</option>
+        </select>
+      </div>
+
+
       <button type="submit" name="send_music_btn"
               class="bg-primary hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold">
         <i class="fas fa-paper-plane mr-2"></i> Gửi bản nhạc
@@ -126,6 +139,10 @@ $submissions = mysqli_query($conn, "
               <p class="text-sm text-gray-600">
                 <i class="fas fa-calendar-alt text-primary mr-1"></i>
                 <?php echo date('d/m/Y H:i', strtotime($s['created_at'])); ?>
+              </p>
+              <p class="text-sm text-gray-600">
+                <i class="fas fa-user-tag text-secondary mr-1"></i>
+                Gửi đến: <?php echo ucfirst($s['target_role']); ?>
               </p>
             </div>
             <div class="text-right">
