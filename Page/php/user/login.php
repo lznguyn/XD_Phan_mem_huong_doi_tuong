@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['coordinator_id'] = $row['id'];
                 header('Location: ../coordinator/coordinator_page.php');
                 exit();
-            } elseif ($row['user_type'] == 'arragement') {
+            } elseif ($row['user_type'] == 'arrangement') {
                 $_SESSION['arragement_name'] = $row['name'];
                 $_SESSION['arragement_email'] = $row['email'];
                 $_SESSION['arragement_id'] = $row['id'];
