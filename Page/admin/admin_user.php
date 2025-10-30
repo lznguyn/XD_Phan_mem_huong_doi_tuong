@@ -81,10 +81,11 @@ if (isset($_GET['delete'])) {
                 <?php
                 $total_users = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'user'"));
                 $total_admins = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'admin'"));
+                $total_coordinator = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'coordinator'"));
                 ?>
                 <div class="hidden md:flex items-center space-x-6">
                     <div class="text-center">
-                        <div class="text-2xl font-bold text-primary"><?php echo $total_users + $total_admins; ?></div>
+                        <div class="text-2xl font-bold text-primary"><?php echo $total_users + $total_admins + $total_coordinator; ?></div>
                         <div class="text-sm text-gray-600">Tổng cộng</div>
                     </div>
                     <div class="text-center">
@@ -94,6 +95,10 @@ if (isset($_GET['delete'])) {
                     <div class="text-center">
                         <div class="text-2xl font-bold text-admin"><?php echo $total_admins; ?></div>
                         <div class="text-sm text-gray-600">Quản trị viên</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-admin"><?php echo $total_coordinator; ?></div>
+                        <div class="text-sm text-gray-600">Điều phối viên</div>
                     </div>
                 </div>
             </div>
@@ -105,15 +110,24 @@ if (isset($_GET['delete'])) {
             $select_users = mysqli_query($conn, "SELECT * FROM `users` ORDER BY id DESC") or die('query failed');
             while ($user = mysqli_fetch_assoc($select_users)):
                 $is_admin = $user['user_type'] === 'admin';
+                $is_coordinator = ($user['user_type'] === 'coordinator');
                 $badge_color = $is_admin ? 'bg-admin text-white' : 'bg-accent text-white';
             ?>
             <div class="bg-white border-2 <?php echo $is_admin ? 'border-admin' : 'border-gray-200'; ?> rounded-xl shadow-sm p-6 hover:shadow-lg transition-all">
                 <div class="text-center mb-4">
                     <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto">
-                        <i class="fas <?php echo $is_admin ? 'fa-user-shield' : 'fa-user'; ?> text-white text-xl"></i>
+                        <i class="fas <?php 
+                            if ($is_admin) echo 'fa-user-shield'; 
+                            elseif ($is_coordinator) echo 'fa-user-tie'; 
+                            else echo 'fa-user'; 
+                        ?>  text-white text-xl"></i>
                     </div>
                     <div class="<?php echo $badge_color; ?> rounded-full mt-2 px-2 py-1 text-xs font-semibold inline-block">
-                        <?php echo $is_admin ? 'Admin' : 'User'; ?>
+                        <?php 
+                            if ($is_admin) echo 'Admin';
+                            elseif ($is_coordinator) echo 'Coordinator';
+                            else echo 'User';
+                        ?>
                     </div>
                 </div>
 
