@@ -2,7 +2,7 @@
 include 'config.php';
 session_start();
 
-// Kiểm tra người dùng đã đăng nhập
+// Kiểm tra người dùng đã đăng nhập 
 $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
 if (isset($_POST['add_to_cart'])) {
