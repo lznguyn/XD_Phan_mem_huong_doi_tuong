@@ -71,8 +71,8 @@ $orders = mysqli_query($conn, "
               <td class="py-3 px-4 text-center">
                 <span class="px-3 py-1 text-white rounded-full 
                   <?php 
-                    if($o['payment_status'] == 'paid') echo 'bg-accent';
-                    elseif($o['payment_status'] == 'cancelled') echo 'bg-danger';
+                    if($o['payment_status'] == 'completed') echo 'bg-accent';
+                    elseif($o['payment_status'] == 'pending') echo 'bg-danger';
                     else echo 'bg-secondary';
                   ?>">
                   <?= $o['payment_status'] ?? 'Chờ xác nhận'; ?>

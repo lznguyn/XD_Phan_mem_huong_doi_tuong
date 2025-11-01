@@ -35,7 +35,8 @@ if (isset($_POST['order_btn'])) {
         if (mysqli_num_rows($order_query) > 0) {
             $_SESSION['cart_message'] = 'Đơn hàng đã được đặt trước đó!';
         } else {
-            mysqli_query($conn, "INSERT INTO `orders`(user_id,name,number,email,method,total_products,total_price,placed_on) VALUES('$user_id','$name','$number','$email','$method','$total_products','$cart_total','$placed_on')") or die('query failed');
+            $status = 'pending'; 
+            mysqli_query($conn, "INSERT INTO `orders`(user_id,name,number,email,method,total_products,total_price,placed_on, payment_status) VALUES('$user_id','$name','$number','$email','$method','$total_products','$cart_total','$placed_on', '$status')") or die('query failed');
             mysqli_query($conn, "DELETE FROM `cart` WHERE user_id='$user_id'") or die('query failed');
             $_SESSION['cart_message'] = 'Đơn hàng đã được đặt thành công!';
             $show_success_modal = true;
