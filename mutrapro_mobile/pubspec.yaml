@@ -1,0 +1,45 @@
+name: mutrapro_mobile
+description: "MuTraPro mobile (Customer) – Flutter skeleton"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI & điều hướng
+  cupertino_icons: ^1.0.8
+  go_router: ^14.2.0
+
+  # State management
+  flutter_riverpod: ^2.5.1
+
+  # HTTP & tiện ích
+  dio: ^5.7.0
+  intl: ^0.20.2
+  path_provider: ^2.1.4
+
+  # Bảo mật & lưu trữ
+  flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.2.3
+
+  # i18n
+  flutter_localizations:
+    sdk: flutter
+  easy_localization: ^3.0.7
+
+  # Upload file
+  file_picker: ^8.1.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/translations/
