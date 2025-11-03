@@ -80,7 +80,7 @@ function createStatCard(icon, title, value, colorClass, subtitle = '') {
 // Lấy dữ liệu API và render
 async function loadStats() {
     try {
-        const res = await fetch('../api/admin_page.php', { credentials: 'include' });
+        const res = await fetch('../api/admin_page_api.php', { credentials: 'include' });
         if (!res.ok) throw new Error('Không thể lấy dữ liệu API!');
         const data = await res.json();
 
