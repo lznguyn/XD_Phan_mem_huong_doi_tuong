@@ -65,4 +65,9 @@ $res = mysqli_query($conn, "SELECT COUNT(*) AS cnt FROM users WHERE user_type='a
 $row = mysqli_fetch_assoc($res);
 $data['admins_count'] = (int)$row['cnt'];
 
+//nv
+$res = mysqli_query($conn, "SELECT COUNT(*) AS cnt FORM users WHERE user_type='arrangement' && user_type='transcription'");
+$row =mysqli_fetch_assoc($res);
+$data['staff_count'] = (int)$row['cnt'];
+
 echo json_encode($data);

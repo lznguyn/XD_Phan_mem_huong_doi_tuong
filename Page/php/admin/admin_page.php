@@ -97,6 +97,7 @@ async function loadStats() {
             ${createStatCard('fas fa-check-circle text-success', 'Booking đã hoàn thành', data.completed_orders_count, 'bg-success bg-opacity-10')}
             ${createStatCard('fas fa-users text-green-600', 'Người dùng', data.users_count, 'bg-green-100')}
             ${createStatCard('fas fa-user-shield text-red-600', 'Quản trị viên', data.admins_count, 'bg-red-100')}
+            ${createStatCard('fas fa-staff text-green-600', 'Staff', data.staff_count, 'bg-green-100')}
         `;
     } catch (err) {
         console.error(err);
