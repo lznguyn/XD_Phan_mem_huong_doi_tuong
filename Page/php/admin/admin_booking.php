@@ -47,7 +47,7 @@ async function fetchBookings() {
     const container = document.getElementById("bookingList");
     container.innerHTML = '<div class="col-span-full text-center text-gray-500">Đang tải dữ liệu...</div>';
     try {   
-        const res = await fetch("../api/booking_api.php");
+        const res = await fetch("../api/admin_booking.php");
         const data = await res.json();
 
         if (data.length === 0) {
@@ -89,7 +89,7 @@ async function fetchBookings() {
 
 async function confirmBooking(id) {
     if (!confirm("Xác nhận buổi đặt này đã hoàn thành?")) return;
-    const res = await fetch("../api/booking_api.php", {
+    const res = await fetch("../api/admin_booking.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ booking_id: id })
@@ -101,7 +101,7 @@ async function confirmBooking(id) {
 
 async function deleteBooking(id) {
     if (!confirm("Bạn có chắc muốn xóa booking này không?")) return;
-    const res = await fetch("../api/booking_api.php", {
+    const res = await fetch("../api/admin_booking.php", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ booking_id: id })
