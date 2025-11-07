@@ -2,6 +2,8 @@ FROM php:8.2-apache
 
 RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
 
+COPY php.ini /usr/local/etc/php/
+
 # COPY đúng thư mục chứa code PHP
 COPY php/ /var/www/html/
 

@@ -19,7 +19,7 @@ if (isset($_POST['upload_mix'])) {
         $file_tmp = $_FILES['mix_file']['tmp_name'];
         $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
-        $allowed_ext = ['mp3','wav','flac'];
+        $allowed_ext = ['mid'];
         if (in_array($file_ext, $allowed_ext)) {
             $upload_dir = 'uploaded_mixes/';
             if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
@@ -113,7 +113,7 @@ $submissions = mysqli_query($conn, "
 
                     <form method="POST" enctype="multipart/form-data" class="flex flex-col items-end gap-2">
                         <input type="hidden" name="request_id" value="<?php echo $s['id']; ?>">
-                        <input type="file" name="mix_file" accept=".mp3,.wav,.flac" required>
+                        <input type="file" name="mix_file" accept=".mid" required>
                         <button type="submit" name="upload_mix" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm">
                             Upload bản phối
                         </button>

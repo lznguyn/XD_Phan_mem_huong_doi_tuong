@@ -8,8 +8,23 @@ services:
       - "8080:80"
     volumes:
       - ./php:/var/www/html
+      - ./php/uploaded_music:/var/www/html/uploaded_music
     depends_on:
       - db
+      - fastapi
+    networks:
+      - appnet
+
+  fastapi:
+    build: ./fastapi
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./fastapi:/app
+    networks:
+      - appnet
+
   db:
     image: mysql:8.0
     container_name: mysql_db
@@ -19,6 +34,9 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - appnet
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
@@ -31,5 +49,11 @@ services:
       PMA_PASSWORD: 123456
     depends_on:
       - db
+    networks:
+      - appnet
+
 volumes:
   db_data:
+
+networks:
+  appnet:

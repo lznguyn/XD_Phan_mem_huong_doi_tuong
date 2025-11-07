@@ -18,31 +18,69 @@ if (isset($_POST['send_music_btn'])) {
     $note = mysqli_real_escape_string($conn, $_POST['note']);
     $target_role = mysqli_real_escape_string($conn, $_POST['target_role']);
 
-    // Kiểm tra file
-    if (isset($_FILES['music_file']) && $_FILES['music_file']['error'] == 0) {
+    // DEBUG: Kiểm tra chi tiết file upload
+    if (!isset($_FILES['music_file'])) {
+        $upload_message = "Không tìm thấy file trong request. Kiểm tra thuộc tính enctype của form.";
+    } elseif ($_FILES['music_file']['error'] !== 0) {
+        // Giải thích mã lỗi
+        $error_messages = [
+            1 => "File vượt quá upload_max_filesize trong php.ini (hiện tại: " . ini_get('upload_max_filesize') . ")",
+            2 => "File vượt quá MAX_FILE_SIZE trong form HTML",
+            3 => "File chỉ được upload một phần",
+            4 => "Không có file nào được chọn",
+            6 => "Thiếu thư mục tạm để lưu file",
+            7 => "Không thể ghi file vào ổ đĩa",
+            8 => "Extension PHP đã dừng việc upload"
+        ];
+        $error_code = $_FILES['music_file']['error'];
+        $upload_message = "Lỗi upload: " . ($error_messages[$error_code] ?? "Lỗi không xác định (code: $error_code)");
+    } else {
+        // File upload thành công, tiếp tục xử lý
         $file_name = $_FILES['music_file']['name'];
         $file_tmp = $_FILES['music_file']['tmp_name'];
+        $file_size = $_FILES['music_file']['size'];
         $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
         $allowed_ext = ['mp3', 'wav', 'midi', 'flac'];
-        if (in_array($file_ext, $allowed_ext)) {
+        
+        // Kiểm tra định dạng
+        if (!in_array($file_ext, $allowed_ext)) {
+            $upload_message = "Định dạng file không hợp lệ. Chỉ chấp nhận: " . implode(', ', $allowed_ext);
+        } 
+        // Kiểm tra kích thước (10MB)
+        elseif ($file_size > 10 * 1024 * 1024) {
+            $upload_message = "File quá lớn. Kích thước tối đa: 10MB. File của bạn: " . round($file_size / 1024 / 1024, 2) . "MB";
+        } 
+        else {
             $upload_dir = 'uploaded_music/';
-            if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
-
-            $new_name = uniqid('music_', true) . '.' . $file_ext;
-            move_uploaded_file($file_tmp, $upload_dir . $new_name);
-
-            mysqli_query($conn, "INSERT INTO `music_submissions`(user_id, title, file_name, note, status, target_role, created_at)
-                VALUES('$user_id', '$title', '$new_name', '$note', 'pending', '$target_role', NOW())") or die('query failed');
-
-            $_SESSION['upload_message'] = 'Gửi bản nhạc thành công! Chúng tôi sẽ liên hệ sớm.';
-            header('Location: ' . $_SERVER['PHP_SELF']);
-            exit();
-        } else {
-            $upload_message = "Định dạng file không hợp lệ. Chỉ chấp nhận mp3, wav, midi, flac.";
+            if (!is_dir($upload_dir)) {
+                if (!mkdir($upload_dir, 0777, true)) {
+                    $upload_message = "Không thể tạo thư mục upload. Kiểm tra quyền ghi.";
+                }
+            }
+            
+            if (empty($upload_message)) {
+                $new_name = uniqid('music_', true) . '.' . $file_ext;
+                $destination = $upload_dir . $new_name;
+                
+                if (move_uploaded_file($file_tmp, $destination)) {
+                    $query = "INSERT INTO `music_submissions`(user_id, title, file_name, note, status, target_role, created_at)
+                              VALUES('$user_id', '$title', '$new_name', '$note', 'pending', '$target_role', NOW())";
+                    
+                    if (mysqli_query($conn, $query)) {
+                        $_SESSION['upload_message'] = 'Gửi bản nhạc thành công! Chúng tôi sẽ liên hệ sớm.';
+                        header('Location: ' . $_SERVER['PHP_SELF']);
+                        exit();
+                    } else {
+                        $upload_message = "Lỗi lưu database: " . mysqli_error($conn);
+                        // Xóa file đã upload
+                        unlink($destination);
+                    }
+                } else {
+                    $upload_message = "Không thể di chuyển file. Kiểm tra quyền ghi thư mục uploaded_music/";
+                }
+            }
         }
-    } else {
-        $upload_message = "Vui lòng chọn file nhạc để gửi.";
     }
 }
 
