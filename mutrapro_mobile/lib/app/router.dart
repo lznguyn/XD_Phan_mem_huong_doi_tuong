@@ -9,19 +9,17 @@ import '../features/requests/ui/create_request_screen.dart';
 import '../features/booking/ui/schedule_screen.dart';
 import '../features/profile/ui/profile_screen.dart';
 import 'shell.dart';
-
-/// Trạng thái đăng nhập đơn giản (placeholder). Sau này thay bằng AuthController.
-final authStateProvider = StateProvider<bool>((_) => false);
+import '../features/auth/logic/auth_controller.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final loggedIn = ref.watch(authStateProvider);
+  final auth = ref.watch(authControllerProvider);
   return GoRouter(
-    initialLocation: '/splash',
-    redirect: (ctx, state) {
-      final isAuthRoute = state.matchedLocation.startsWith('/auth');
-      final publicRoute = state.matchedLocation == '/onboarding' || state.matchedLocation == '/splash';
-      if (!loggedIn && !isAuthRoute && !publicRoute) return '/auth/login';
-      if (loggedIn && isAuthRoute) return '/orders';
+    initialLocation: '/auth/login',
+    redirect: (ctx, s) {
+      final loggingIn = s.matchedLocation.startsWith('/auth');
+      final publicRoute = s.matchedLocation == '/onboarding' || s.matchedLocation == '/splash';
+      if (!auth.loggedIn && !loggingIn && !publicRoute) return '/auth/login';
+      if (auth.loggedIn && loggingIn) return '/orders';
       return null;
     },
     routes: [
