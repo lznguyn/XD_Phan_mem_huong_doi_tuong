@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../app/router.dart';
+import '../../../app/router.dart'; // để dùng context.go nếu bạn tách guard ở router
+import '../logic/auth_controller.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -39,17 +40,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               const SizedBox(height: 24),
               FilledButton(
-                onPressed: _loading
-                    ? null
-                    : () async {
-                        if (!_form.currentState!.validate()) return;
-                        setState(() => _loading = true);
-                        await Future.delayed(const Duration(milliseconds: 600)); // giả lập call
-                        // set logged in
-                        ref.read(authStateProvider.notifier).state = true;
-                        if (mounted) context.go('/orders');
-                        setState(() => _loading = false);
-                      },
+                onPressed: _loading ? null : () async {
+                  if (!_form.currentState!.validate()) return;
+                  setState(() => _loading = true);
+                  try {
+                    await ref.read(authControllerProvider.notifier).login(_email.text, _password.text);
+                    if (mounted) context.go('/orders');
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Đăng nhập thất bại: $e')),
+                      );
+                    }
+                  } finally {
+                    if (mounted) setState(() => _loading = false);
+                  }
+                },
                 child: _loading
                     ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
                     : const Text('Đăng nhập'),
