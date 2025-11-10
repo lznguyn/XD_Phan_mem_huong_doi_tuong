@@ -19,8 +19,8 @@ if (isset($_POST['go_to_checkout'])) {
         // Kiểm tra trùng
         $exists = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id='$user_id' AND name='$name'");
         if (mysqli_num_rows($exists) == 0) {
-            mysqli_query($conn, "INSERT INTO `cart`(user_id, name, price, quantity)
-                VALUES('$user_id', '$name', '$price', '$quantity')") or die('query failed');
+            mysqli_query($conn, "INSERT INTO `cart`(user_id, name, price, quantity, image)
+                VALUES('$user_id', '$name', '$price', '$quantity', '')") or die('query failed');
         }
 
         header('Location: payment.php'); // hoặc payment.php
@@ -123,10 +123,29 @@ $completed = mysqli_query($conn, "
             </div>
 
             <div class="mt-4 flex items-center justify-between">
-              <a href="uploaded_music/<?php echo $c['file_name']; ?>" target="_blank"
-                 class="text-primary underline text-sm">
-                 <i class="fas fa-play mr-1"></i> Nghe sản phẩm
-              </a>
+              <?php
+                $file_ext = strtolower(pathinfo($c['file_name'], PATHINFO_EXTENSION));
+                if (in_array($file_ext, ['mp3', 'wav', 'flac', 'ogg'])) {
+                    // 🔊 Nếu là file âm thanh → hiện nút Nghe
+                    echo '<a href="uploaded_music/' . htmlspecialchars($c['file_name']) . '" target="_blank"
+                            class="text-primary underline text-sm">
+                            <i class="fas fa-play mr-1"></i> Nghe sản phẩm
+                          </a>';
+                } elseif ($file_ext == 'mid' || $file_ext == 'midi') {
+                    // 🎵 Nếu là file MIDI → hiện nút Tải về
+                    echo '<a href="uploaded_music/' . htmlspecialchars($c['file_name']) . '" download
+                            class="text-green-600 underline text-sm">
+                            <i class="fas fa-download mr-1"></i> Tải file MIDI
+                          </a>';
+                } else {
+                    // 📄 Trường hợp khác → hiện nút xem/tải chung
+                    echo '<a href="uploaded_music/' . htmlspecialchars($c['file_name']) . '" target="_blank"
+                            class="text-gray-600 underline text-sm">
+                            <i class="fas fa-file mr-1"></i> Xem file
+                          </a>';
+                }
+                ?>
+
             </div>
 
             <?php if ($c['status'] == 'completed'): ?>

@@ -28,8 +28,8 @@ if (isset($_POST['upload_mix'])) {
             move_uploaded_file($file_tmp, $upload_dir . $new_name);
 
             mysqli_query($conn, "UPDATE music_submissions 
-                SET title='$new_name', status='completed' 
-                WHERE id='$request_id' AND target_role='arrangement'") 
+                SET title='$new_name', status='completed', file_name = '$new_name' 
+                WHERE id='$request_id' AND target_role='transcription'") 
                 or die('Lỗi cập nhật bản phối!');   
 
             $upload_message = "✅ Upload bản phối thành công!";

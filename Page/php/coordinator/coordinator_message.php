@@ -10,33 +10,57 @@ if (!$coordinator_id) {
 
 // Khi admin gửi cập nhật
 if (isset($_POST['update_status'])) {
-    $request_id = mysqli_real_escape_string($conn, $_POST['request_id']);
+    $item_id = mysqli_real_escape_string($conn, $_POST['item_id']);
     $status = mysqli_real_escape_string($conn, $_POST['status']);
     $message = mysqli_real_escape_string($conn, $_POST['message']);
 
-    // Cập nhật trạng thái yêu cầu
-    mysqli_query($conn, "UPDATE bookings SET status = '$status' WHERE id = '$request_id'") or die('Lỗi cập nhật yêu cầu!');
-
-    // Lấy thông tin khách hàng & chuyên gia
-    $info_query = mysqli_query($conn, "SELECT user_id, expert_id FROM bookings WHERE id = '$request_id'");
-    $info = mysqli_fetch_assoc($info_query);
-    $user_id = $info['user_id'];
-    $expert_id = $info['expert_id'];
+    if (str_starts_with($item_id, 'booking-'))
+    {
+      $id = intval(substr($item_id, 8));
+      // Cập nhật bookings
+      mysqli_query($conn, "UPDATE bookings SET status='$status' WHERE id='$id'") or die('Lỗi cập nhật bookings!');
+      
+      // Lấy thông tin user & expert
+      $info_query = mysqli_query($conn, "SELECT user_id, expert_id FROM bookings WHERE id='$id'");
+      $info = mysqli_fetch_assoc($info_query);
+      
+      // Kiểm tra tồn tại
+      $user_id = $info['user_id'] ?? null;
+      $expert_id = $info['expert_id'] ?? null;
+    } elseif (str_starts_with($item_id, 'submission-')) {
+      $id = intval(substr($item_id, 11));
+      // Cập nhật music_submissions
+      mysqli_query($conn, "UPDATE music_submissions SET status='$status' WHERE id='$id'") or die('Lỗi cập nhật submissions!');
+      
+      // Lấy thông tin user (chỉ cần thông báo cho khách hàng)
+      $info_query = mysqli_query($conn, "SELECT user_id FROM music_submissions WHERE id='$id'");
+      $info = mysqli_fetch_assoc($info_query);
+      
+      // Kiểm tra tồn tại
+      $user_id = $info['user_id'] ?? null;
+      $expert_id = null;
+    } else {
+      die ('Muc khong ton tai!');
+    }
 
      // Tiêu đề thông báo
-    $title = "Cập nhật yêu cầu dịch vụ #$request_id";
+    $title = "Cập nhật yêu cầu dịch vụ #$item_id";
 
    // Gửi thông báo đến khách hàng
+if (!empty($user_id)) {
     mysqli_query($conn, "
         INSERT INTO notifications (user_id, title, message, status, created_at)
         VALUES ('$user_id', '$title', '$message', 'unread', NOW())
     ") or die('Lỗi gửi thông báo user!');
+}
 
     // Gửi thông báo đến chuyên gia
+if (!empty($expert_id)) {
     mysqli_query($conn, "
         INSERT INTO notifications (user_id, title, message, status, created_at)
         VALUES ('$expert_id', '$title', '$message', 'unread', NOW())
     ") or die('Lỗi gửi thông báo expert!');
+}
 
     $_SESSION['toast_message'] = "✅ Đã cập nhật trạng thái và gửi thông báo thành công!";
     header('location:coordinator_message.php');
@@ -50,7 +74,12 @@ $requests = mysqli_query($conn, "
   JOIN users u ON sr.user_id = u.id
   JOIN experts e ON sr.expert_id = e.id
   ORDER BY sr.date DESC
-");
+") or die('Lỗi lấy danh sách yêu cầu!');
+$music_requests = mysqli_query($conn, "
+  SELECT ms.*, u.name AS customer_name
+  FROM music_submissions ms
+  JOIN users u ON ms.user_id = u.id
+  ORDER BY ms.created_at DESC") or die('Lỗi lấy danh sách yêu cầu âm nhạc!');
 ?>
 
 <!DOCTYPE html>
@@ -70,14 +99,26 @@ $requests = mysqli_query($conn, "
   <form method="POST" class="space-y-6">
     <div>
       <label class="block text-gray-700 font-medium mb-2">Chọn yêu cầu dịch vụ</label>
-      <select name="request_id" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-        <option value="">-- Chọn yêu cầu --</option>
-        <?php while ($r = mysqli_fetch_assoc($requests)): ?>
-          <option value="<?php echo $r['id']; ?>">
-            #<?php echo $r['id']; ?> - <?php echo htmlspecialchars($r['user_name']); ?> (<?php echo htmlspecialchars($r['expert_name']); ?>)
-          </option>
-        <?php endwhile; ?>
+      <select name="item_id" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+        <option value="">-- Chọn mục --</option>
+
+        <optgroup label="Yêu cầu dịch vụ (Bookings)">
+          <?php while ($b = mysqli_fetch_assoc($requests)): ?>
+            <option value="booking-<?php echo $b['id']; ?>">
+              #<?php echo $b['id']; ?> - <?php echo htmlspecialchars($b['user_name']); ?> (<?php echo htmlspecialchars($b['expert_name']); ?>)
+            </option>
+          <?php endwhile; ?>
+        </optgroup>
+
+        <optgroup label="Bài nhạc (Music Submissions)">
+          <?php while ($s = mysqli_fetch_assoc($music_requests)): ?>
+            <option value="submission-<?php echo $s['id']; ?>">
+              #<?php echo $s['id']; ?> - <?php echo htmlspecialchars($s['title']); ?> (<?php echo htmlspecialchars($s['customer_name']); ?>)
+            </option>
+          <?php endwhile; ?>
+        </optgroup>
       </select>
+
     </div>
 
     <div>
